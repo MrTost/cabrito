@@ -1,0 +1,24 @@
+# https://docs.docker.com/compose/compose-file/
+version: '3.9'
+services:
+  postgres:
+    container_name: "cabrito-postgres"
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: cabrito
+      POSTGRES_USER: cabrito
+      POSTGRES_PASSWORD: cabrito
+    volumes:
+      - .docker/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+networks:
+  cabrito-net:
