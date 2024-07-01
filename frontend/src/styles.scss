@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'video.js/dist/video-js.css';
 
 html,
 body {
@@ -7,4 +7,15 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.epg-bottom-sheet-container {
+  min-width: 100% !important;
+
+  mat-bottom-sheet-container {
+    overflow: hidden !important;
+    min-width: 100% !important;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-top: 1px solid rgba(50,50,50, 0.9);
+  }
 }

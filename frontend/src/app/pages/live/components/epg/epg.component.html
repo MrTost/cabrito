@@ -1,0 +1,48 @@
+<div>
+  <mat-chip-listbox aria-label="Fish selection" multiple>
+    @for (category of categories; track category; let idx = $index) {
+      <mat-chip-option>{{category.name}}</mat-chip-option>
+    }
+  </mat-chip-listbox>
+</div>
+
+
+<!-- https://levelup.gitconnected.com/angular-gantt-chart-component-using-simple-maths-and-css-1de51fdbaaab -->
+<!-- TODO - create the gantt chart -->
+<div class="epg-container">
+
+  <!--<div class="epg-category">
+    <mat-button-toggle-group #group="matButtonToggleGroup" vertical multiple hideMultipleSelectionIndicator>
+      @for (category of categories; track category; let idx = $index) {
+        <mat-button-toggle [value]="category.id" aria-label="Text align left">
+          <mat-icon>format_align_left</mat-icon>
+          {{category.name}}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>-->
+
+  <div class="epg-channels">
+    @for (channel of liveService.channels | async; track channel; let idx = $index) {
+      <div
+        matRipple
+        [matRippleCentered]="true"
+        class="epg-line mat-elevation-z0"
+        (click)="liveService.setChannel(channel, idx)"
+        [appEpgFocus]="idx === cursorChannels"
+        [class.epg-line-focused]="idx === cursorChannels"
+      >
+        <div class="epg-line-logo" [class.mat-elevation-z4]="idx === cursorChannels" [class.mat-elevation-z2]="idx !== cursorChannels">
+          <img [src]="'assets/iptv-logos/' + channel.channelId + '.webp'" alt="{{ channel.channelName }}" style="max-width: 100px; max-height: 60px">
+          <span class="country-flag">{{channel.countryFlag}}</span>
+        </div>
+
+        <div class="epg-line-schedule">{{channel.countryId}} - {{ channel.channelName }}</div>
+      </div>
+    }
+  </div>
+
+  <div style="width: 20%; border: 1px solid white">
+    Event Details
+  </div>
+</div>

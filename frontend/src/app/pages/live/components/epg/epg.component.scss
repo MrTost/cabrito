@@ -1,0 +1,80 @@
+@use '@angular/material' as mat;
+
+.epg-container {
+  display: flex;
+  max-height: 300px;
+}
+
+.epg-category {
+  height: 280px;
+  overflow: auto;
+}
+
+.epg-line {
+  cursor: pointer;
+  height: 68px;
+  width: 100%;
+  border: 1px solid rgba(50,50,50, 0.9);
+  font-size: 20px;
+
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  text-align: center;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.epg-line-logo {
+  width: 110px;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2px;
+  position: relative;
+
+  .country-flag {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.epg-line-schedule {
+  align-content: center;
+}
+
+.epg-line-focused {
+  background-color: rgb(255,255,255,0.2);
+}
+
+.epg-channels {
+  height: 345px;
+  width: 80%;
+  overflow: hidden;
+}
+
+.demo-table {
+  height: 300px;
+  overflow: auto;
+  width: 80%;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
