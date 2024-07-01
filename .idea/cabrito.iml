@@ -3,6 +3,7 @@
   <component name="Go" enabled="true" />
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.docker" />
       <excludeFolder url="file://$MODULE_DIR$/backend/webapp" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/.angular/cache" />
     </content>

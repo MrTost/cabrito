@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cabrito/database"
 	"embed"
 	"io/fs"
 	"log"
@@ -15,6 +16,10 @@ var indexContent []byte
 
 func main() {
 	log.Println("Cabrito Server initiating")
+
+	database.RunMigration()
+
+	// dbPool := database.GetDatabasePool()
 
 	mux := http.NewServeMux()
 
