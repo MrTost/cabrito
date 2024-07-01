@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.docker" />
       <excludeFolder url="file://$MODULE_DIR$/backend/webapp" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/.angular/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/.data" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
