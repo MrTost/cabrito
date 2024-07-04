@@ -2,4 +2,6 @@
 .docker
 /app
 /tmp/
+/backend/.data
 /backend/webapp/
+/backend/config.json
