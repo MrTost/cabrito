@@ -4,4 +4,4 @@
 /tmp/
 /backend/.data
 /backend/webapp/
-/backend/config.json
+/backend/.secret/

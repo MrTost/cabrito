@@ -1,0 +1,3 @@
+{
+  "database_url": "postgresql://cabrito:cabrito@localhost:5432/cabrito?sslmode=disable"
+}

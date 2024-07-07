@@ -1,0 +1,11 @@
+### Return EPG
+GET localhost:8080/api/live/epg
+
+### Start Iptv-Org refresh
+POST localhost:8080/api/live/iptv-org
+
+### Status Aranha 1
+GET localhost:8080/api/aranha/1
+
+### Start Aranha 1
+POST localhost:8080/api/aranha/1
