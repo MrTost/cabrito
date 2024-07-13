@@ -58,7 +58,11 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
 
     this.player = videojs(this.target.nativeElement, options, onPlayerReady);
 
-    // videojs.hook('error', function(player: any, err: any) {
+    // videojs.hook('error', function (player: any, err: any) {
+    //   console.log(`player ${player.id()} has errored out with code ${err.code} ${err.message}`);
+    // });
+    //
+    // videojs.hook('retryplaylist', function (player: any, err: any) {
     //   console.log(`player ${player.id()} has errored out with code ${err.code} ${err.message}`);
     // });
   }

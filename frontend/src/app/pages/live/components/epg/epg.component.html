@@ -33,7 +33,7 @@
         [class.epg-line-focused]="idx === cursorChannels"
       >
         <div class="epg-line-logo" [class.mat-elevation-z4]="idx === cursorChannels" [class.mat-elevation-z2]="idx !== cursorChannels">
-          <img [src]="'data/live/channel-logo/' + channel.countryId + '/' + channel.channelId + '.png'" alt="{{ channel.channelName }}" style="max-width: 100px; max-height: 60px">
+          <img [src]="'/../data/live/channel-logo/' + channel.countryId + '/' + channel.channelId + '.png'" alt="{{ channel.channelName }}" style="max-width: 100px; max-height: 60px">
           <span class="country-flag">{{channel.countryFlag}}</span>
         </div>
 
