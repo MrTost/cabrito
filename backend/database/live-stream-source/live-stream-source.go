@@ -49,6 +49,7 @@ func (db *Persist) GetByChannelId(channelId string) ([]types.LiveStreamSource, e
 			&source.SourceFile,
 			&source.SourceHeaders,
 			&source.SourceQuery,
+			&source.SourceStreamKey,
 			&source.Resolution,
 		)
 		if err != nil {
@@ -158,6 +159,7 @@ func (db *Persist) ScanSaveSource(channel *types.LiveStreamSource, channelSource
 		channel.SourceFile,
 		headersJson,
 		queryParamsJson,
+		channel.SourceStreamKey,
 		scanStatus)
 	if err != nil {
 		log.Printf("Error saving the channel source: %s", err)

@@ -59,7 +59,7 @@ func (api *LiveStreamApi) Secondary(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	log.Printf("Response: %d", resp.StatusCode)
+	log.Printf("Secondary Response: %d", resp.StatusCode)
 
 	playlist, err := m3u8.Read(resp.Body)
 	if err != nil {
@@ -73,10 +73,14 @@ func (api *LiveStreamApi) Secondary(w http.ResponseWriter, r *http.Request) {
 		switch item := item.(type) {
 		case *m3u8.KeyItem:
 			// Modify the EXT-X-KEY URI
-			var uriOld = item.Encryptable.URI
+			var keyUrl = strings.Clone(*item.Encryptable.URI)
+
+			for key, value := range liveStreamProxy.StreamKey {
+				keyUrl = strings.ReplaceAll(keyUrl, key, value)
+			}
 
 			authProxy := types.LiveStreamProxy{
-				Url:     url.QueryEscape(*uriOld),
+				Url:     keyUrl,
 				Headers: liveStreamProxy.Headers,
 			}
 

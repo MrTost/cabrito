@@ -9,3 +9,16 @@ GET localhost:8080/api/aranha/1
 
 ### Start Aranha 1
 POST localhost:8080/api/aranha/1
+Content-Type: application/json
+
+{
+
+}
+
+### Start Aranha 1
+POST localhost:8080/api/aranha/1
+Content-Type: application/json
+
+{
+  "channelNum": ["303"]
+}

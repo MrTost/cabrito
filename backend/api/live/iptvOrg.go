@@ -159,6 +159,10 @@ func (api *Api) iptvOrgRefreshChannels() {
 		channel.Id = strings.ReplaceAll(caser.String(channel.Country)+caser.String(channel.Name), " ", "")
 		channel.Id = regex.ReplaceAllString(channel.Id, "")
 
+		if channel.Country == "UK" {
+			channel.Country = "GB"
+		}
+
 		log.Println(channel)
 
 		_ = api.db.LiveStreamChannel.Save(&channel)

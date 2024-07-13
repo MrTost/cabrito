@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/etherlabsio/go-m3u8/m3u8"
@@ -14,6 +15,7 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"slices"
 	"time"
 )
 
@@ -45,22 +47,24 @@ func (api *Api) A1start(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var filter types.AranhaStart
+
+	if r.Body != nil {
+		err = json.NewDecoder(r.Body).Decode(&filter)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
 	api.jobs.a1.Running = true
-	go api.a1Job(aranha)
+	go api.a1Job(aranha, &filter)
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte("Job started"))
 }
 
-func (api *Api) a1JobError(err error) {
-	log.Printf("Error running aranha 1: %v", err)
-
-	api.jobs.a1.Mu.Lock()
-	api.jobs.a1.Running = false
-	api.jobs.a1.Mu.Unlock()
-}
-
-func (api *Api) a1Job(aranha *types.Aranha) {
+func (api *Api) a1Job(aranha *types.Aranha, filter *types.AranhaStart) {
 	var channelList []types.LiveStreamSource
 
 	channelListUrl := aranha.BaseUrl + aranha.Entrypoint
@@ -69,11 +73,21 @@ func (api *Api) a1Job(aranha *types.Aranha) {
 
 	step0ParseResponse(aranha, &channelList, body)
 
+	if filter != nil && len(filter.ChannelNum) > 0 {
+		channelList = slices.DeleteFunc(channelList, func(ch types.LiveStreamSource) bool {
+			return !slices.Contains(filter.ChannelNum, ch.ChannelNum)
+		})
+	}
+
 	channelsTotal := len(channelList)
 
 	err := api.db.LiveStreamSource.ScanStart(aranha.ProviderId)
 	if err != nil {
-		api.a1JobError(err)
+		log.Printf("Error running aranha 1: %v", err)
+
+		api.jobs.a1.Mu.Lock()
+		api.jobs.a1.Running = false
+		api.jobs.a1.Mu.Unlock()
 		return
 	}
 
@@ -92,14 +106,20 @@ func (api *Api) a1Job(aranha *types.Aranha) {
 
 	channel, err := api.db.LiveStreamSource.ScanGetChannel(aranha.ProviderId)
 	if err != nil {
-		api.a1JobError(err)
+		log.Printf("Error running aranha 1: %v", err)
+
+		api.jobs.a1.Mu.Lock()
+		api.jobs.a1.Running = false
+		api.jobs.a1.Mu.Unlock()
 		return
 	}
 
 	for channel != nil {
 		channel, err = api.db.LiveStreamSource.ScanGetChannel(aranha.ProviderId)
 		if err != nil {
-			api.a1JobError(err)
+			api.jobs.a1.Mu.Lock()
+			api.jobs.a1.Running = false
+			api.jobs.a1.Mu.Unlock()
 			return
 		}
 
@@ -109,6 +129,8 @@ func (api *Api) a1Job(aranha *types.Aranha) {
 		if err != nil {
 			log.Println("Error getting channel source")
 		}
+
+		channel.SourceStreamKey = aranha.StreamKey
 
 		err = api.db.LiveStreamSource.ScanSaveSource(channel, err)
 		if err != nil {
@@ -122,7 +144,11 @@ func (api *Api) a1Job(aranha *types.Aranha) {
 
 	err = api.db.LiveStreamSource.ScanEnd(aranha.ProviderId)
 	if err != nil {
-		api.a1JobError(err)
+		log.Printf("Error running aranha 1: %v", err)
+
+		api.jobs.a1.Mu.Lock()
+		api.jobs.a1.Running = false
+		api.jobs.a1.Mu.Unlock()
 		return
 	}
 

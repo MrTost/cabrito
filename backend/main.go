@@ -44,6 +44,7 @@ func hostWebapp(mux *http.ServeMux) {
 		log.Fatal(err)
 	}
 
+	mux.Handle("/data/", http.StripPrefix("/data/", http.FileServer(http.Dir(".data"))))
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(webApp))))
 
 	// Serve /app requests
@@ -61,6 +62,7 @@ func hostWebapp(mux *http.ServeMux) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if !strings.HasPrefix(r.URL.Path, "/api/") &&
 			!strings.HasPrefix(r.URL.Path, "/app/") &&
+			!strings.HasPrefix(r.URL.Path, "/data/") &&
 			!strings.HasPrefix(r.URL.Path, "/static/") {
 			http.Redirect(w, r, "/app/", http.StatusFound)
 			return

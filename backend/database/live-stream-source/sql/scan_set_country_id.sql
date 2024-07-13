@@ -14,8 +14,11 @@ WITH channel_words AS (SELECT source_id,
                      upper(c.country_id) = upper(channel_words.word)
                          OR upper(c.country_id3) = upper(channel_words.word)
                          OR upper(c.country_name) = upper(channel_words.word)
+                         or upper(channel_words.word) = any (ARRAY(
+                             SELECT upper(unnest(c.other_names))
+                                                             ))
                      )
-                 where word not in ('TV')),
+                 where word not in ('TV', 'HD')),
      duplicates as (select source_id
                     from matches
                     group by source_id

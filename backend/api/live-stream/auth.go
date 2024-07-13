@@ -56,7 +56,7 @@ func (api *LiveStreamApi) Auth(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		log.Printf("Response: %d", resp.StatusCode)
+		log.Printf("Auth Response: %d", resp.StatusCode)
 
 		// Read the response body
 		body, err := io.ReadAll(resp.Body)

@@ -54,7 +54,7 @@ func (api *LiveStreamApi) Segment(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	log.Printf("Response: %d", resp.StatusCode)
+	log.Printf("Segment Response: %d - %s", resp.StatusCode, resp.Request.URL.String())
 
 	// Set Content-Type header to "application/vnd.apple.mpegurl"
 	w.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
@@ -62,6 +62,7 @@ func (api *LiveStreamApi) Segment(w http.ResponseWriter, r *http.Request) {
 	// Write the response body to the client
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
+		log.Print("Error copying body to response", err)
 		http.Error(w, "Failed to write response", http.StatusInternalServerError)
 		return
 	}

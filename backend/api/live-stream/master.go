@@ -60,7 +60,7 @@ func (api *LiveStreamApi) Master(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		log.Printf("Response: %d", resp.StatusCode)
+		log.Printf("Master Response: %d", resp.StatusCode)
 
 		playlist, err := m3u8.Read(resp.Body)
 		if err != nil {
@@ -130,8 +130,10 @@ func getStreamInfUrl(source *types.LiveStreamSource, playlistUri string) (string
 	}
 
 	liveStreamProxy := types.LiveStreamProxy{
-		Url:     sourceUrl,
-		Headers: source.SourceHeaders,
+		Url:       sourceUrl,
+		Headers:   source.SourceHeaders,
+		Query:     source.SourceQuery,
+		StreamKey: source.SourceStreamKey,
 	}
 
 	streamProxy, err := encodeLiveStreamProxy(&liveStreamProxy)

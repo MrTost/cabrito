@@ -1,11 +1,11 @@
 with channels as (select a.source_id,
                          a.country_id,
                          a.channel_name,
-                         regexp_replace(trim(replace(replace(replace(upper(a.channel_name),
-                                                                     upper(b.country_name), ''),
-                                                             upper(b.country_id3), ''),
-                                                     upper(b.country_id), '')
-                                        ), '\s+', ' ', 'g') AS updated_name
+                         regexp_replace(trim(regexp_replace(upper(a.channel_name),
+                                                            array_to_string(array_cat(b.other_names,
+                                                                                      ARRAY [b.country_name, b.country_id3, b.country_id]),
+                                                                            '|'),
+                                                            '', 'gi')), '\s+', ' ', 'g') AS updated_name
                   from cabrito.live_stream_source a,
                        cabrito.country b
                   where a.country_id = b.country_id

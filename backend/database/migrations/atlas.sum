@@ -1,4 +1,4 @@
-h1:RqUJdMaScjkbURM1w8KxfHOZzLW1F4GYf0c62n6a+DA=
+h1:vf/6aAwYJpUOwJDtW/UmRnbzr1UuG9xdWTEwUCYTsjU=
 20240630022231_create_cabrito_schema.sql h1:GVpRzuPlnhqQvqdYdwW4S3wnCxvbGIo/ohONjgthCGg=
 20240701014808_country.sql h1:kY/C2HTiOgzjKg/B3bZq/bp4b/dif3GjCaaLZk+penM=
 20240701015527_language.sql h1:tffQXAktpKJGYdI3p6iR6loSzM1/JDKXhhDi5uXGSz4=
@@ -9,3 +9,4 @@ h1:RqUJdMaScjkbURM1w8KxfHOZzLW1F4GYf0c62n6a+DA=
 20240701021232_live_stream_channel_language.sql h1:EuIPxK6bD45Vx2siSS1h6nYmyquKNlKqjzN2zuHfaQw=
 20240701021507_live_stream_source.sql h1:Q7FIQnZfb/wtodNaH+GiHGixz2x8FTlLDc2IQTXjkNw=
 20240705002632_aranha.sql h1:CbSdPO2Jn5+rxxCwkquxj8N3RF/AAbhev0/g7WbMRzQ=
+20240713144603_new_features.sql h1:CkSeYxWQEQKd12c/D5f+10JGZPNRypauh2sNIWl/z2I=
