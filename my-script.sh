@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 scp .bin/cabrito-server-linux-intel tost@192.168.2.28:~/cabrito/cabrito-server-linux-intel
-scp -r backend/.data tost@192.168.2.28:~/cabrito/.data
+scp -r backend/.data tost@192.168.2.28:~/cabrito
 
 echo "[Unit]
 Description=Cabrito Web Service
@@ -10,6 +10,7 @@ Description=Cabrito Web Service
 Type=simple
 Restart=always
 RestartSec=5s
+User=tost
 ExecStart=/home/tost/cabrito/cabrito-server-linux-intel
 WorkingDirectory=/home/tost/cabrito
 
