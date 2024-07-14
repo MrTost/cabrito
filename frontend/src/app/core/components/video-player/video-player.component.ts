@@ -5,11 +5,10 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import videojs from 'video.js';
+import Hls from 'hls.js';
 
 @Component({
   selector: 'app-video-player',
@@ -18,8 +17,8 @@ import videojs from 'video.js';
   templateUrl: './video-player.component.html',
   styleUrl: './video-player.component.scss',
 })
-export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
-  @ViewChild('target', { static: true }) target!: ElementRef;
+export class VideoPlayerComponent implements OnChanges, OnDestroy {
+  @ViewChild('target', { static: true }) target!: ElementRef<HTMLMediaElement>;
 
   @Input()
   class = '';
@@ -33,53 +32,33 @@ export class VideoPlayerComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ transform: booleanAttribute })
   autoplay = false;
 
-  // @ts-expect-error video.js support to angular is fuzzy
-  player: videojs.Player;
+  private hls: Hls | undefined;
 
   constructor(private elementRef: ElementRef) {}
 
-  // Instantiate a Video.js player OnInit
-  ngOnInit() {
-    // See options: https://videojs.com/guides/options
-    const options = {
-      autoplay: this.autoplay,
-      sources: [
-        {
-          src: this.src,
-          type: this.type,
-        },
-      ],
-      controls: false,
-    };
-
-    const onPlayerReady = () => {
-      console.log('onPlayerReady');
-    };
-
-    this.player = videojs(this.target.nativeElement, options, onPlayerReady);
-
-    // videojs.hook('error', function (player: any, err: any) {
-    //   console.log(`player ${player.id()} has errored out with code ${err.code} ${err.message}`);
-    // });
-    //
-    // videojs.hook('retryplaylist', function (player: any, err: any) {
-    //   console.log(`player ${player.id()} has errored out with code ${err.code} ${err.message}`);
-    // });
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['src'].firstChange) {
-      const type = changes['type']?.currentValue ?? this.type;
-      const src = changes['src']?.currentValue ?? this.src;
+    const src = changes['src']?.currentValue ?? this.src;
 
-      this.player.src({ type: type, src: src });
+    const video = this.target.nativeElement;
+
+    if (Hls.isSupported()) {
+      if (this.hls) {
+        this.hls.destroy();
+      }
+
+      this.hls = new Hls();
+      this.hls.loadSource(src);
+      this.hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = src;
     }
+
+    video.play().then();
   }
 
-  // Dispose the player OnDestroy
   ngOnDestroy() {
-    if (this.player) {
-      this.player.dispose();
+    if (this.hls) {
+      this.hls.destroy();
     }
   }
 }
