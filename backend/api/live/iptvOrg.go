@@ -279,8 +279,15 @@ func downloadLogo(channel *types.IptvOrgChannel) error {
 		return err
 	}
 
+	// image to grayscale
+	//grayscaleImage := imaging.Grayscale(img)
+	//
+	//if AverageLuminance(grayscaleImage) < 20.0 {
+	//	grayscaleImage = imaging.Invert(grayscaleImage)
+	//}
+
 	// resize the image
-	imgLogo := imaging.Resize(img, 0, 32, imaging.Lanczos)
+	imgLogo := imaging.Resize( /*grayscaleImage*/ img, 0, 32, imaging.Lanczos)
 
 	filePath := ".data/live/channel-logo/" + channel.Country + "/" + channel.Id + ".png"
 
@@ -305,4 +312,22 @@ func downloadLogo(channel *types.IptvOrgChannel) error {
 	}
 
 	return nil
+}
+
+// AverageLuminance calculates the average luminance of a grayscale image.
+func AverageLuminance(img image.Image) float64 {
+	bounds := img.Bounds()
+	totalLuminance := 0.0
+	totalPixels := float64(bounds.Dx() * bounds.Dy())
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			r, g, b, _ := img.At(x, y).RGBA()
+			// Convert RGB to luminance (Y in YCbCr color space approximation)
+			luminance := 0.299*float64(r) + 0.587*float64(g) + 0.114*float64(b)
+			totalLuminance += luminance
+		}
+	}
+
+	return totalLuminance / totalPixels
 }

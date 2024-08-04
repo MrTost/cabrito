@@ -16,6 +16,8 @@ import (
 func (api *LiveStreamApi) Master(w http.ResponseWriter, r *http.Request) {
 	log.Printf("")
 
+	sourceId := r.URL.Query().Get("sourceId")
+
 	channelId := r.PathValue("channelId")
 
 	log.Printf("Openning master stream: %s", channelId)
@@ -25,10 +27,22 @@ func (api *LiveStreamApi) Master(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sources, err := api.db.LiveStreamSource.GetByChannelId(channelId)
-	if err != nil {
-		http.Error(w, "Failed to fetch channel sources", http.StatusInternalServerError)
-		return
+	var err error
+	var sources []types.LiveStreamSource
+
+	if sourceId != "" {
+		source, err := api.db.LiveStreamSource.GetBySourceId(sourceId)
+		if err != nil {
+			http.Error(w, "Failed to fetch channel sources", http.StatusInternalServerError)
+			return
+		}
+		sources = append(sources, source)
+	} else {
+		sources, err = api.db.LiveStreamSource.GetByChannelId(channelId)
+		if err != nil {
+			http.Error(w, "Failed to fetch channel sources", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	masterPlaylist := m3u8.NewPlaylist()

@@ -22,3 +22,6 @@ Content-Type: application/json
 {
   "channelNum": ["303"]
 }
+
+### Get Sources
+GET localhost:8080/api/live/stream/source

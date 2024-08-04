@@ -36,3 +36,17 @@ func (db *Persist) Save(category *types.IptvOrgCategory) error {
 
 	return nil
 }
+
+//go:embed sql/searchJson.sql
+var sqlSearchJson string
+
+func (db *Persist) SearchJson() ([]byte, error) {
+	ctx := context.Background()
+
+	var jsonData []byte
+
+	// todo: implement profile feature and replace hard-coded id
+	err := db.pool.QueryRow(ctx, sqlSearchJson).Scan(&jsonData)
+
+	return jsonData, err
+}

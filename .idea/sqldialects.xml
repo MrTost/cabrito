@@ -7,8 +7,10 @@
     <file url="file://$PROJECT_DIR$/backend/database/live-stream-source/sql/scan_get_channel.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/backend/database/live-stream-source/sql/scan_set_channel_id.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/backend/database/live-stream-source/sql/scan_set_country_id.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/backend/database/live-stream-source/sql/searchJson.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/backend/database/migrations/20240701021507_live_stream_source.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/backend/database/migrations/20240713144603_new_features.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/backend/database/migrations/20240723223030_iptv_org_new_fields.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>

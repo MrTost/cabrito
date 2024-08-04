@@ -19,6 +19,45 @@ func Create(pool *pgxpool.Pool) *Persist {
 	}
 }
 
+//go:embed sql/getBySourceId.sql
+var getBySourceIdSql string
+
+func (db *Persist) GetBySourceId(sourceId string) (types.LiveStreamSource, error) {
+	ctx := context.Background()
+
+	var source types.LiveStreamSource
+
+	err := db.pool.QueryRow(ctx, getBySourceIdSql, sourceId).Scan(
+		&source.SourceId,
+		&source.ProviderId,
+		&source.LangId,
+		&source.ChannelId,
+		&source.ChannelName,
+		&source.ChannelNum,
+		&source.SourceUrl,
+		&source.SourceFile,
+		&source.SourceHeaders,
+		&source.SourceQuery,
+		&source.SourceStreamKey,
+		&source.Resolution,
+	)
+
+	return source, err
+}
+
+//go:embed sql/searchJson.sql
+var sqlSearchJson string
+
+func (db *Persist) SearchJson() ([]byte, error) {
+	ctx := context.Background()
+
+	var jsonData []byte
+
+	err := db.pool.QueryRow(ctx, sqlSearchJson).Scan(&jsonData)
+
+	return jsonData, err
+}
+
 //go:embed sql/getByChannelId.sql
 var getByChannelIdSql string
 

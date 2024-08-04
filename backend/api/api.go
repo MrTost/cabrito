@@ -20,9 +20,11 @@ func Create(db *database.Persist) *http.ServeMux {
 	apiLive := live.Create(db)
 	mux.HandleFunc("POST /api/live/iptv-org", apiLive.IptvOrg)
 	mux.HandleFunc("GET /api/live/epg", apiLive.Epg)
+	mux.HandleFunc("GET /api/live/epg/category", apiLive.EpgCategories)
 
 	apiLiveStream := live_stream.Create(db)
-	//mux.HandleFunc("GET /api/live/auth/{sourceId}", apiLiveStream.Auth)
+	mux.HandleFunc("GET /api/live/stream/source", apiLiveStream.SearchSource)
+	mux.HandleFunc("POST /api/live/stream/proxy", apiLiveStream.ProxyEncoder)
 	mux.HandleFunc("GET /api/live/stream/{channelId}/index.m3u8", apiLiveStream.Master)
 	mux.HandleFunc("GET /api/live/stream/{channelId}/{sourceId}/index.m3u8", apiLiveStream.Secondary)
 	mux.HandleFunc("GET /api/live/stream/{channelId}/{sourceId}/auth", apiLiveStream.Auth)

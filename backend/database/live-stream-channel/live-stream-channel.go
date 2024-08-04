@@ -29,9 +29,13 @@ func (db *Persist) Save(channel *types.IptvOrgChannel) error {
 		saveSql,
 		channel.Id,
 		channel.Name,
+		channel.AltNames,
 		channel.Country,
 		channel.City,
-		channel.Subdivision)
+		channel.Subdivision,
+		channel.Launched,
+		channel.Closed,
+		channel.Replaced_by)
 	if err != nil {
 		log.Printf("Error saving the channel: %s", err)
 		return err
@@ -43,13 +47,13 @@ func (db *Persist) Save(channel *types.IptvOrgChannel) error {
 //go:embed sql/searchJson.sql
 var sqlSearchJson string
 
-func (db *Persist) SearchJson() ([]byte, error) {
+func (db *Persist) SearchJson(categoryId string) ([]byte, error) {
 	ctx := context.Background()
 
 	var jsonData []byte
 
 	// todo: implement profile feature and replace hard-coded id
-	err := db.pool.QueryRow(ctx, sqlSearchJson).Scan(&jsonData)
+	err := db.pool.QueryRow(ctx, sqlSearchJson, categoryId).Scan(&jsonData)
 
 	return jsonData, err
 }
