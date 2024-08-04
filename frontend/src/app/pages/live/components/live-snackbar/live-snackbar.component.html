@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="country-flag">{{ data.countryFlag }}</div>
+
+  <img [src]="'/../data/live/channel-logo/' + data.countryId + '/' + data.channelId + '.png'"
+       alt="{{ data.channelName }}" style="max-width: 100px; max-height: 60px">
+
+  <div class="channel-name">
+    {{data.channelName}}
+  </div>
+</div>
