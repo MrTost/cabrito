@@ -21,3 +21,8 @@ sudo systemctl daemon-reload
 sudo systemctl enable cabrito-server.service
 sudo systemctl start cabrito-server.service
 sudo systemctl status cabrito-server.service
+
+sudo systemctl stop cabrito-server.service
+rm cabrito-server-linux-intel
+mv cabrito-server-linux-intel-2 cabrito-server-linux-intel
+sudo systemctl start cabrito-server.service
