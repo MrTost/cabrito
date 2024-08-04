@@ -1,8 +1,9 @@
-@if (liveService.channelSelected | async; as selected) {
+@if (channelSelected) {
   <app-video-player
-    class="main-player"
-    [src]="'/api/live/stream/' + selected.channelId + '/index.m3u8'"
+    class="container"
+    [src]="'/api/live/stream/' + channelSelected.channelId + '/index.m3u8'"
     type="application/x-mpegURL"
     autoplay
   />
 }
+

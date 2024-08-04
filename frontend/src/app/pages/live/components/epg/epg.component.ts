@@ -1,16 +1,17 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { LiveService } from '../../live.service';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { AsyncPipe } from '@angular/common';
-import { MatRipple } from '@angular/material/core';
+import { MatRippleModule } from '@angular/material/core';
 import { EpgFocusDirective } from './epg-focus.directive';
+import { MatListModule } from '@angular/material/list';
+import { EpgService } from './epg.service';
+import { EpgCursor } from '../../../../core/models/epg-cursor';
 
 @Component({
   selector: 'app-epg',
   standalone: true,
-  imports: [MatChipListbox, MatChipOption, AsyncPipe, MatRipple, EpgFocusDirective],
+  imports: [MatChipListbox, MatChipOption, AsyncPipe, MatRippleModule, EpgFocusDirective, MatListModule],
   templateUrl: './epg.component.html',
   styleUrl: './epg.component.scss',
 })
@@ -18,72 +19,65 @@ export class EpgComponent implements OnInit, OnDestroy {
   public cursorChannels = 0;
   private cursorChannelsSub: Subscription | undefined;
 
-  public categories = [
-    { id: 'auto', name: 'Auto', icon: '' },
-    { id: 'animation', name: 'Animation', icon: '' },
-    { id: 'business', name: 'Business', icon: '' },
-    { id: 'classic', name: 'Classic', icon: '' },
-    { id: 'comedy', name: 'Comedy', icon: '' },
-    { id: 'cooking', name: 'Cooking', icon: '' },
-    { id: 'culture', name: 'Culture', icon: '' },
-    { id: 'documentary', name: 'Documentary', icon: '' },
-    { id: 'education', name: 'Education', icon: '' },
-    { id: 'entertainment', name: 'Entertainment', icon: '' },
-    { id: 'family', name: 'Family', icon: '' },
-    { id: 'general', name: 'General', icon: '' },
-    { id: 'kids', name: 'Kids', icon: '' },
-    { id: 'legislative', name: 'Legislative', icon: '' },
-    { id: 'lifestyle', name: 'Lifestyle', icon: '' },
-    { id: 'movies', name: 'Movies', icon: '' },
-    { id: 'music', name: 'Music', icon: '' },
-    { id: 'news', name: 'News', icon: '' },
-    { id: 'outdoor', name: 'Outdoor', icon: '' },
-    { id: 'relax', name: 'Relax', icon: '' },
-    { id: 'religious', name: 'Religious', icon: '' },
-    { id: 'series', name: 'Series', icon: '' },
-    { id: 'science', name: 'Science', icon: '' },
-    { id: 'shop', name: 'Shop', icon: '' },
-    { id: 'sports', name: 'Sports', icon: '' },
-    { id: 'travel', name: 'Travel', icon: '' },
-    { id: 'weather', name: 'Weather', icon: '' },
-    { id: 'xxx', name: 'XXX', icon: '' },
-  ];
+  public cursor: EpgCursor | undefined;
+  private cursorSub: Subscription | undefined;
 
-  constructor(
-    private _bottomSheetRef: MatBottomSheetRef<EpgComponent>,
-    public liveService: LiveService,
-  ) {}
+  public selection: Map<number, number> = new Map<number, number>();
+  private selectionSub: Subscription | undefined;
+
+  constructor(public epgService: EpgService) {}
 
   ngOnInit(): void {
-    this.cursorChannelsSub = this.liveService.cursorChannels.subscribe((position) => {
-      this.cursorChannels = position;
+    this.cursorSub = this.epgService.cursor.subscribe((cursor) => {
+      this.cursor = cursor;
+    });
+
+    this.selectionSub = this.epgService.selection.subscribe((selection) => {
+      this.selection = selection;
     });
   }
 
   @HostListener('window:keydown.ArrowUp', ['$event'])
-  onArrowUp(event: KeyboardEvent) {
-    console.log('window:keydown.ArrowUp pressed');
-    this.liveService.cursorChannelUp();
+  onArrowUp(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.ArrowUp pressed');
+    this.epgService.cursorUp();
   }
 
   @HostListener('window:keydown.ArrowDown', ['$event'])
-  onArrowDown(event: KeyboardEvent) {
-    console.log('window:keydown.ArrowDown pressed');
-    this.liveService.cursorChannelDown();
+  onArrowDown(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.ArrowDown pressed');
+    this.epgService.cursorDown();
+  }
+
+  @HostListener('window:keydown.ArrowLeft', ['$event'])
+  onArrowLeft(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.ArrowLeft pressed');
+    this.epgService.cursorLeft();
+  }
+
+  @HostListener('window:keydown.ArrowRight', ['$event'])
+  onArrowRight(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.ArrowRight pressed');
+    this.epgService.cursorRight();
   }
 
   @HostListener('window:keydown.enter', ['$event'])
-  onKeyPressEnter(event: KeyboardEvent) {
-    console.log('window:keydown.enter pressed');
-    this.liveService.selectChannelCursor();
+  onKeyPressEnter(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.enter pressed');
+    this.epgService.cursorSelect();
+  }
+
+  isCursorIn(col: number, row: number) {
+    return this.cursor !== undefined && this.cursor.col === col && this.cursor.row[this.cursor.col] === row;
+  }
+
+  isSelected(col: number, row: number) {
+    return this.selection.get(col) === row;
   }
 
   ngOnDestroy(): void {
     this.cursorChannelsSub?.unsubscribe();
-  }
-
-  openLink(event: MouseEvent): void {
-    this._bottomSheetRef.dismiss();
-    event.preventDefault();
+    this.cursorSub?.unsubscribe();
+    this.selectionSub?.unsubscribe();
   }
 }

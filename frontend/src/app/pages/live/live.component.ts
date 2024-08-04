@@ -3,9 +3,11 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-shee
 import { Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { EpgComponent } from './components/epg/epg.component';
-import { LiveService } from './live.service';
 import { VideoPlayerComponent } from '../../core/components/video-player/video-player.component';
 import { AsyncPipe } from '@angular/common';
+import { EpgService } from './components/epg/epg.service';
+import { EpgChannel } from '../../core/models/epg-channel';
+import { LiveSnackbarComponent } from './components/live-snackbar/live-snackbar.component';
 
 @Component({
   selector: 'app-live',
@@ -36,70 +38,93 @@ export class LiveComponent implements OnInit, OnDestroy {
   //   // }
   // }
 
-  private readonly channelSelectedSub: Subscription | undefined;
+  public channelSelected: EpgChannel | undefined;
+  private channelSelectedSub: Subscription | undefined;
+
+  private categorySelectedSub: Subscription | undefined;
+
+  public epgVisible: boolean | undefined;
+  private epgVisibleSub: Subscription | undefined;
 
   constructor(
-    public liveService: LiveService,
+    public epgService: EpgService,
     private bottomSheet: MatBottomSheet,
     private snackBar: MatSnackBar,
   ) {
     const horizontalPosition: MatSnackBarHorizontalPosition = 'end';
     const verticalPosition: MatSnackBarVerticalPosition = 'top';
 
-    this.channelSelectedSub = this.liveService.channelSelected.subscribe((channel) => {
-      if (channel) {
-        const msg = `${channel.channelId} - ${channel.channelName}`;
+    this.channelSelectedSub = this.epgService.channelSelected.subscribe((channel) => {
+      this.channelSelected = channel;
 
-        this.snackBar.open(msg, undefined, {
+      if (channel) {
+        this.snackBar.openFromComponent(LiveSnackbarComponent, {
           horizontalPosition: horizontalPosition,
           verticalPosition: verticalPosition,
           duration: 2000,
+          data: channel,
         });
       }
     });
   }
 
   ngOnInit(): void {
-    this.liveService.loadChannels();
-    this.openBottomSheet();
+    this.epgVisibleSub = this.epgService.visible.subscribe((visible) => {
+      this.epgVisible = visible;
+      if (visible) {
+        this.bottomSheetRef = this.openBottomSheet();
+      } else {
+        this.bottomSheetRef?.dismiss();
+      }
+    });
+
+    this.categorySelectedSub = this.epgService.categorySelected.subscribe((category) => {
+      this.epgService.loadChannels(category);
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.channelSelectedSub) {
-      this.channelSelectedSub.unsubscribe();
-    }
+    this.channelSelectedSub?.unsubscribe();
+    this.categorySelectedSub?.unsubscribe();
+    this.epgVisibleSub?.unsubscribe();
   }
 
   @HostListener('window:keydown.enter', ['$event'])
-  onKeyPressEnter(event: KeyboardEvent) {
-    console.log('window:keydown.enter pressed');
-    if (this.bottomSheetRef) {
-      console.log('close');
-      this.bottomSheetRef.dismiss();
-      this.bottomSheetRef = undefined;
-    } else {
-      console.log('open');
-      this.openBottomSheet();
+  onKeyPressEnter(/*event: KeyboardEvent*/) {
+    // console.log('window:keydown.enter pressed');
+
+    if (this.epgVisible === false) {
+      this.epgService.setVisible(true);
     }
   }
 
   @HostListener('window:keydown.ArrowUp', ['$event'])
-  onArrowUp(event: KeyboardEvent) {
-    if (!this.bottomSheetRef) {
-      this.liveService.selectChannel('up');
+  onArrowUp(/*event: KeyboardEvent*/) {
+    if (this.epgVisible === false) {
+      this.epgService.selectChannel('up');
     }
   }
 
   @HostListener('window:keydown.ArrowDown', ['$event'])
-  onArrowDown(event: KeyboardEvent) {
-    if (!this.bottomSheetRef) {
-      this.liveService.selectChannel('down');
+  onArrowDown(/*event: KeyboardEvent*/) {
+    if (this.epgVisible === false) {
+      this.epgService.selectChannel('down');
     }
   }
 
-  openBottomSheet(): void {
-    this.bottomSheetRef = this.bottomSheet.open(EpgComponent, {
+  private openBottomSheet() {
+    const bottomSheetRef = this.bottomSheet.open(EpgComponent, {
       panelClass: 'epg-bottom-sheet-container',
     });
+
+    bottomSheetRef.afterOpened().subscribe(() => {
+      this.epgService.setVisible(true);
+    });
+
+    bottomSheetRef.afterDismissed().subscribe(() => {
+      this.epgService.setVisible(false);
+    });
+
+    return bottomSheetRef;
   }
 }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LiveService } from './live.service';
+import { EpgService } from './epg.service';
 
-describe('LiveService', () => {
-  let service: LiveService;
+describe('EpgService', () => {
+  let service: EpgService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LiveService);
+    service = TestBed.inject(EpgService);
   });
 
   it('should be created', () => {

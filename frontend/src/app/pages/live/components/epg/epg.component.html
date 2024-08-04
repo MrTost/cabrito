@@ -1,43 +1,46 @@
-<div>
+<!--<div>
   <mat-chip-listbox aria-label="Fish selection" multiple>
     @for (category of categories; track category; let idx = $index) {
       <mat-chip-option>{{category.name}}</mat-chip-option>
     }
   </mat-chip-listbox>
-</div>
+</div>-->
 
 
 <!-- https://levelup.gitconnected.com/angular-gantt-chart-component-using-simple-maths-and-css-1de51fdbaaab -->
 <!-- TODO - create the gantt chart -->
 <div class="epg-container">
+  <mat-action-list class="epg-category hide-scrollbar">
+    @for (category of epgService.categories | async; track category.id; let idx = $index) {
+      <button mat-list-item
+              [appEpgFocus]="isCursorIn(0, idx) || (cursor?.col !== 0 && isSelected(0, idx))"
+              [class.highlight-cursor]="isCursorIn(0, idx)"
+              [class.highlight-selection]="isSelected(0, idx)">
+        {{ category.name }}
+      </button>
+    }
+  </mat-action-list>
 
-  <!--<div class="epg-category">
-    <mat-button-toggle-group #group="matButtonToggleGroup" vertical multiple hideMultipleSelectionIndicator>
-      @for (category of categories; track category; let idx = $index) {
-        <mat-button-toggle [value]="category.id" aria-label="Text align left">
-          <mat-icon>format_align_left</mat-icon>
-          {{category.name}}
-        </mat-button-toggle>
-      }
-    </mat-button-toggle-group>
-  </div>-->
-
-  <div class="epg-channels">
-    @for (channel of liveService.channels | async; track channel; let idx = $index) {
+  <div class="epg-channels hide-scrollbar">
+    @for (channel of epgService.channels | async; track channel.channelId; let idx = $index) {
       <div
         matRipple
         [matRippleCentered]="true"
         class="epg-line mat-elevation-z0"
-        (click)="liveService.setChannel(channel, idx)"
-        [appEpgFocus]="idx === cursorChannels"
-        [class.epg-line-focused]="idx === cursorChannels"
+        [appEpgFocus]="isCursorIn(1, idx)"
+        [class.highlight-cursor]="isCursorIn(1, idx)"
+        [class.highlight-selection]="isSelected(1, idx)"
+        [class.highlight-unhealthy]="!channel.scanStatus.includes('COMPLETED')"
+        [class.highlight-closed]="channel.isClosed"
       >
-        <div class="epg-line-logo" [class.mat-elevation-z4]="idx === cursorChannels" [class.mat-elevation-z2]="idx !== cursorChannels">
-          <img [src]="'/../data/live/channel-logo/' + channel.countryId + '/' + channel.channelId + '.png'" alt="{{ channel.channelName }}" style="max-width: 100px; max-height: 60px">
-          <span class="country-flag">{{channel.countryFlag}}</span>
+        <div class="epg-line-logo" [class.mat-elevation-z4]="idx === cursorChannels"
+             [class.mat-elevation-z2]="idx !== cursorChannels">
+          <img [src]="'/../data/live/channel-logo/' + channel.countryId + '/' + channel.channelId + '.png'"
+               alt="{{ channel.channelName }}" style="max-width: 100px; max-height: 60px">
+          <span class="country-flag">{{ channel.countryFlag }}</span>
         </div>
 
-        <div class="epg-line-schedule">{{channel.countryId}} - {{ channel.channelName }}</div>
+        <div class="epg-line-schedule">{{ channel.countryId }} - {{ channel.channelName }}</div>
       </div>
     }
   </div>

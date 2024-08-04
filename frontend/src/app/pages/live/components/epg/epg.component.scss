@@ -2,12 +2,19 @@
 
 .epg-container {
   display: flex;
-  max-height: 300px;
 }
 
 .epg-category {
-  height: 280px;
-  overflow: auto;
+  height: 300px;
+  width: 170px;
+  padding-right: 8px;
+  overflow-y: scroll;
+}
+
+.epg-channels {
+  height: 300px;
+  width: 80%;
+  overflow-y: scroll;
 }
 
 .epg-line {
@@ -40,8 +47,8 @@
 
   .country-flag {
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 
@@ -51,12 +58,6 @@
 
 .epg-line-focused {
   background-color: rgb(255,255,255,0.2);
-}
-
-.epg-channels {
-  height: 345px;
-  width: 80%;
-  overflow: hidden;
 }
 
 .demo-table {
@@ -75,6 +76,16 @@
   border-color: currentColor;
 }
 
-.demo-row-is-clicked {
-  font-weight: bold;
+.highlight-cursor {
+  background-color: blue;
 }
+.highlight-selection {
+  background-color: green;
+}
+.highlight-unhealthy {
+  background-color: yellow;
+}
+.highlight-closed {
+  background-color: red;
+}
+
