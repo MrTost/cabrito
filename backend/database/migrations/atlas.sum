@@ -1,4 +1,4 @@
-h1:tKZzYKZi3IFCfWXOYF/537VOAch3Yu31b7awzopptEw=
+h1:hzZu+KHG+NSTInqhUpA5MPLEstd5tGpY+jgDK/G5X5Y=
 20240630022231_create_cabrito_schema.sql h1:GVpRzuPlnhqQvqdYdwW4S3wnCxvbGIo/ohONjgthCGg=
 20240701014808_country.sql h1:kY/C2HTiOgzjKg/B3bZq/bp4b/dif3GjCaaLZk+penM=
 20240701015527_language.sql h1:tffQXAktpKJGYdI3p6iR6loSzM1/JDKXhhDi5uXGSz4=
@@ -11,3 +11,4 @@ h1:tKZzYKZi3IFCfWXOYF/537VOAch3Yu31b7awzopptEw=
 20240705002632_aranha.sql h1:CbSdPO2Jn5+rxxCwkquxj8N3RF/AAbhev0/g7WbMRzQ=
 20240713144603_new_features.sql h1:CkSeYxWQEQKd12c/D5f+10JGZPNRypauh2sNIWl/z2I=
 20240723223030_iptv_org_new_fields.sql h1:X62+oyolaEl7nljLZPfbWmcJHyKHDdutlEkmBNEV5zQ=
+20240805004315_aranha.sql h1:uATpG8xnd2StA1UOn2HmIgUa1PbiVwn3zWIl3h46WKM=

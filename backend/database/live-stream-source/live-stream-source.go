@@ -208,6 +208,48 @@ func (db *Persist) ScanSaveSource(channel *types.LiveStreamSource, channelSource
 	return nil
 }
 
+//go:embed sql/scan_save_source_mapping.sql
+var sqlScanSaveSourceMapping string
+
+func (db *Persist) ScanSaveSourceMapping(channel *types.LiveStreamSource, channelSourceErr error) error {
+	ctx := context.Background()
+
+	headersJson, err := json.Marshal(channel.SourceHeaders)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	queryParamsJson, err := json.Marshal(channel.SourceQuery)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	scanStatus := "COMPLETED"
+	if channelSourceErr != nil {
+		scanStatus = "ERROR: " + channelSourceErr.Error()
+	}
+
+	_, err = db.pool.Exec(
+		ctx,
+		sqlScanSaveSourceMapping,
+		channel.SourceId,
+		channel.ChannelId,
+		channel.CountryId,
+		channel.LangId,
+		channel.SourceUrl,
+		channel.SourceFile,
+		headersJson,
+		queryParamsJson,
+		channel.SourceStreamKey,
+		scanStatus)
+	if err != nil {
+		log.Printf("Error saving the channel source: %s", err)
+		return err
+	}
+
+	return nil
+}
+
 //go:embed sql/scan_end.sql
 var sqlScanEnd string
 

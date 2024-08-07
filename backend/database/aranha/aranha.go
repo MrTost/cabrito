@@ -47,10 +47,8 @@ func (db *Persist) Save(aranha *types.Aranha) error {
 		aranha.Headers,
 		aranha.Query,
 		aranha.StreamKey,
-		aranha.Step0,
-		aranha.Step1,
-		aranha.Step2,
-		aranha.Step3,
+		aranha.Steps,
+		aranha.Mapping,
 	)
 	if err != nil {
 		log.Printf("Error saving the live: %s", err)
@@ -78,10 +76,8 @@ func (db *Persist) GetById(aranhaId string) (*types.Aranha, error) {
 		&aranha.Headers,
 		&aranha.Query,
 		&aranha.StreamKey,
-		&aranha.Step0,
-		&aranha.Step1,
-		&aranha.Step2,
-		&aranha.Step3,
+		&aranha.Steps,
+		&aranha.Mapping,
 	)
 	if err != nil {
 		log.Printf("Error scanning row: %v\n", err)

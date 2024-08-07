@@ -129,12 +129,28 @@ func (api *Api) a1Job(aranha *types.Aranha, filter *types.AranhaStart) {
 		if err != nil {
 			log.Println("Error getting channel source")
 		}
+		if channel == nil {
+			log.Println("Channel is nil")
+			return
+		}
 
 		channel.SourceStreamKey = aranha.StreamKey
 
-		err = api.db.LiveStreamSource.ScanSaveSource(channel, err)
-		if err != nil {
-			log.Println("Error saving the channel source")
+		channelLink, exists := aranha.Mapping[channel.ChannelNum]
+		if exists && channelLink.ChannelId != "" {
+			channel.ChannelId = channelLink.ChannelId
+			channel.CountryId = channelLink.CountryId
+			channel.LangId = channelLink.LangId
+
+			err = api.db.LiveStreamSource.ScanSaveSourceMapping(channel, err)
+			if err != nil {
+				log.Println("Error saving the channel source mapping")
+			}
+		} else {
+			err = api.db.LiveStreamSource.ScanSaveSource(channel, err)
+			if err != nil {
+				log.Println("Error saving the channel source")
+			}
 		}
 
 		log.Println("")
@@ -297,18 +313,20 @@ func step0ParseResponse(aranha *types.Aranha, channels *[]types.LiveStreamSource
 	log.Printf("Parsing channels list")
 
 	// Find matching blocks using regular expressions
-	chBlockRegex := regexp.MustCompile(aranha.Step0[0])
+	chBlockRegex := regexp.MustCompile(aranha.Steps[0].Search)
 	chBlockMatches := chBlockRegex.FindAllString(string(*body), -1)
-	if len(chBlockMatches) == 0 {
+	if len(chBlockMatches) < aranha.Steps[0].Index+1 {
 		fmt.Println("No matching blocks found")
 		return
 	}
 
-	// Find channel data within the matching block
-	chanDataRegex := regexp.MustCompile(aranha.Step0[1])
-	chanDataMatches := chanDataRegex.FindAllStringSubmatch(chBlockMatches[0], -1)
+	chBlock := chBlockMatches[aranha.Steps[0].Index]
 
-	channelNumRegex := regexp.MustCompile(aranha.Step0[2])
+	// Find channel data within the matching block
+	chanDataRegex := regexp.MustCompile(aranha.Steps[1].Search)
+	chanDataMatches := chanDataRegex.FindAllStringSubmatch(chBlock, -1)
+
+	channelNumRegex := regexp.MustCompile(aranha.Steps[2].Search)
 
 	for _, match := range chanDataMatches {
 		if len(match) < 2 {
@@ -349,30 +367,35 @@ func step0ParseResponse(aranha *types.Aranha, channels *[]types.LiveStreamSource
 }
 
 func step1ParseResponse(aranha *types.Aranha, channel *types.LiveStreamSource, body *[]byte) error {
-	urlRegex := regexp.MustCompile(aranha.Step1[0])
+	urlRegex := regexp.MustCompile(aranha.Steps[3].Search)
 	urlMatches := urlRegex.FindStringSubmatch(string(*body))
-	if len(urlMatches) < 2 {
+	if len(urlMatches) < aranha.Steps[3].Index+1 {
 		return errors.New("URL not found in response")
 	}
 
-	return setSourceUrl(channel, urlMatches[1])
+	return setSourceUrl(channel, urlMatches[aranha.Steps[3].Index])
 }
 
 func step2ParseResponse(aranha *types.Aranha, channel *types.LiveStreamSource, body *[]byte) error {
-	urlRegex := regexp.MustCompile(aranha.Step2[0])
+	urlRegex := regexp.MustCompile(aranha.Steps[4].Search)
 	urlMatches := urlRegex.FindStringSubmatch(string(*body))
 
-	if len(urlMatches) < 2 {
+	if len(urlMatches) < aranha.Steps[4].Index+1 {
 		return errors.New("URL not found in response")
 	}
 
-	decodedBytes, err := base64.StdEncoding.DecodeString(urlMatches[1])
-	if err != nil {
-		errM := fmt.Sprintf("failed to decode base64 string: %v", err)
-		return errors.New(errM)
+	found := urlMatches[aranha.Steps[4].Index]
+
+	if aranha.Steps[4].Decrypt == "base64" {
+		decodedBytes, err := base64.StdEncoding.DecodeString(found)
+		if err != nil {
+			errM := fmt.Sprintf("failed to decode base64 string: %v", err)
+			return errors.New(errM)
+		}
+		found = string(decodedBytes)
 	}
 
-	return setSourceUrl(channel, string(decodedBytes))
+	return setSourceUrl(channel, found)
 }
 
 func searchPlayableUrl(header *http.Header, currUrl string) (string, *http.Header, error) {

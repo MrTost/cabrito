@@ -15,9 +15,9 @@ with channel as (select ch.channel_id as "channelId",
                         so.scan_status
                  from cabrito.live_stream_channel ch
                           join cabrito.country c on ch.country_id = c.country_id
-                          join cabrito.live_stream_channel_category cc on cc.channel_id = ch.channel_id
+                          left join cabrito.live_stream_channel_category cc on cc.channel_id = ch.channel_id
                           join cabrito.live_stream_source so on so.channel_id = ch.channel_id
-                 where c.country_id in ('US', 'CA', 'BR', 'GB')
+                 where c.country_id in ('US', 'CA', 'BR', 'GB', 'IE', 'AU', 'NZ', 'IT')
                    and (cc.category_id = $1 or 'all' = $1)),
      channels as (select "channelId",
                          "channelName",

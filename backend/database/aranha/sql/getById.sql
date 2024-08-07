@@ -5,9 +5,7 @@ select a.aranha_id,
        a.headers,
        a.query,
        a.stream_key,
-       a.step0,
-       a.step1,
-       a.step2,
-       a.step3
+       a.steps,
+       a.mapping
 from cabrito.aranha a
 where a.aranha_id = $1
